@@ -19,11 +19,8 @@ services:
       - .env
     ports:
       - "3000:3000"
-    volumes:
-      - code:/code
     depends_on:
       - database
 
 volumes:
   database:
-  code:
