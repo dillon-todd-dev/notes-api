@@ -1,12 +1,40 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { UsersService } from 'src/users/users.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-    constructor(private usersService: UsersService) {}
+    private readonly logger: Logger = new Logger(AuthService.name);
 
-    register(createUserDto: CreateUserDto): string {
-        return this.usersService.createUser(createUserDto);
+    constructor(private usersService: UsersService, private jwtService: JwtService) {}
+
+    async register(createUserDto: CreateUserDto): Promise<{ user: User, token: string }> {
+        const user = await this.usersService.createUser(createUserDto);
+        const payload = { email: user.email, sub: user.id };
+        const token = await this.jwtService.signAsync(payload);
+        return { user, token };
+    }
+
+    async login(loginUserDto: LoginUserDto): Promise<{ user: User, token: string }> {
+        const { email, password } = loginUserDto;
+        const user = await this.usersService.findByEmail(email);
+        if (!user) {
+            this.logger.log(`Unable to find user with email: ${loginUserDto.email}`);
+            throw new NotFoundException('User not found');
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            this.logger.log(`Passwords do not match: ${user.password} --- ${password}`);
+            throw new UnauthorizedException('invalid_credentials');
+        }
+        
+        const payload = { email, sub: user.id };
+        const token = await this.jwtService.signAsync(payload);
+        return { user, token };
     }
 }
