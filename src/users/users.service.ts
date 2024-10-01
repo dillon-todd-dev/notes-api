@@ -3,7 +3,6 @@ import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
-import { hash } from 'crypto';
 
 @Injectable()
 export class UsersService {

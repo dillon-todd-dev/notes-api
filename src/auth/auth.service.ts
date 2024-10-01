@@ -29,7 +29,7 @@ export class AuthService {
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            this.logger.log(`Passwords do not match: ${user.password} --- ${password}`);
+            this.logger.log('incorrect password');
             throw new UnauthorizedException('invalid_credentials');
         }
         
