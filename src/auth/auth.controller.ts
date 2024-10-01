@@ -4,19 +4,22 @@ import { AuthService } from './auth.service';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { Response } from 'express';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { AuthEntity } from './entity/auth.entity';
 
 @Controller('auth')
+@ApiTags('auth')
 export class AuthController {
     private readonly logger: Logger = new Logger(AuthController.name);
 
     constructor(private authService: AuthService) {}
 
+    @ApiCreatedResponse({ type: AuthEntity })
     @Post('register')
     async register(@Body() createUserDto: CreateUserDto, @Res() res: Response): Promise<void> {
         try {
-            const { user, token } = await this.authService.register(createUserDto);
-            delete user.password;
-            res.status(201).send({ user, token });
+            const token = await this.authService.register(createUserDto);
+            res.status(201).send({ accessToken: token });
         } catch (error: unknown) {
             if (error instanceof PrismaClientKnownRequestError) {
                 if (error.code === 'P2002') {
@@ -30,12 +33,12 @@ export class AuthController {
         }
     }
 
+    @ApiCreatedResponse({ type: AuthEntity })
     @Post('login')
     async login(@Body() loginUserDto: LoginUserDto, @Res() res: Response): Promise<void> {
         try {
-            const { user, token } = await this.authService.login(loginUserDto);
-            delete user.password;
-            res.send({ user, token });
+            const token = await this.authService.login(loginUserDto);
+            res.send({ accessToken: token });
         } catch (error: unknown) {
             this.logger.error(error);
             throw new InternalServerErrorException(error);

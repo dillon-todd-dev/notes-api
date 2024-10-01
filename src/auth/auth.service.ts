@@ -12,14 +12,14 @@ export class AuthService {
 
     constructor(private usersService: UsersService, private jwtService: JwtService) {}
 
-    async register(createUserDto: CreateUserDto): Promise<{ user: User, token: string }> {
+    async register(createUserDto: CreateUserDto): Promise<string> {
         const user = await this.usersService.createUser(createUserDto);
         const payload = { email: user.email, sub: user.id };
         const token = await this.jwtService.signAsync(payload);
-        return { user, token };
+        return token;
     }
 
-    async login(loginUserDto: LoginUserDto): Promise<{ user: User, token: string }> {
+    async login(loginUserDto: LoginUserDto): Promise<string> {
         const { email, password } = loginUserDto;
         const user = await this.usersService.findByEmail(email);
         if (!user) {
@@ -35,6 +35,6 @@ export class AuthService {
         
         const payload = { email, sub: user.id };
         const token = await this.jwtService.signAsync(payload);
-        return { user, token };
+        return token;
     }
 }
