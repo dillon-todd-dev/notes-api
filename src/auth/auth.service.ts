@@ -26,6 +26,7 @@ export class AuthService {
             this.logger.log(`Unable to find user with email: ${loginUserDto.email}`);
             throw new NotFoundException('User not found');
         }
+        this.logger.debug(`found user with email: ${loginUserDto.email}`);
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
