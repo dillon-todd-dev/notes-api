@@ -11,6 +11,7 @@ async function bootstrap() {
     .setTitle('Notes App')
     .setDescription('Notes App Description')
     .setVersion('0.1')
+    .addBearerAuth()
     .build();
   
   const document = SwaggerModule.createDocument(app, config);
