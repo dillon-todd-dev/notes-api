@@ -5,7 +5,9 @@ import { Response } from 'express';
 
 @Catch(PrismaClientKnownRequestError)
 export class PrismaClientExceptionFilter extends BaseExceptionFilter {
-  private readonly logger: Logger = new Logger(PrismaClientExceptionFilter.name);
+  private readonly logger: Logger = new Logger(
+    PrismaClientExceptionFilter.name,
+  );
 
   catch(exception: PrismaClientKnownRequestError, host: ArgumentsHost) {
     this.logger.error(exception.message);
@@ -14,12 +16,12 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
     const response = ctx.getResponse<Response>();
     const message = exception.message.replace(/\n/g, '');
 
-    switch(exception.code) {
+    switch (exception.code) {
       case 'P2002':
         const status = HttpStatus.CONFLICT;
         response.status(status).json({
           statusCode: status,
-          message: message
+          message: message,
         });
         break;
       default:
