@@ -10,6 +10,7 @@ import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { UserEntity } from 'src/users/entity/user.entity';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +19,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private emailService: EmailService
   ) {}
 
   async register(
@@ -26,6 +28,7 @@ export class AuthService {
     const user = await this.usersService.create(createUserDto);
     const payload = { email: user.email, sub: user.id };
     const token = await this.jwtService.signAsync(payload);
+    this.emailService.sendUserConfirmation(user, token);
     return { token, user: new UserEntity(user) };
   }
 

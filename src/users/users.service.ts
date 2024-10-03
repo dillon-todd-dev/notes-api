@@ -20,6 +20,10 @@ export class UsersService {
     return user;
   }
 
+  async findAll() {
+    return this.prisma.user.findMany
+  }
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     const { password } = createUserDto;
     const hashedPassword = await bcrypt.hash(password, 10);

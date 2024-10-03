@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
@@ -24,5 +24,10 @@ export class AuthController {
   async login(@Body() loginUserDto: LoginUserDto): Promise<AuthEntity> {
     const { token, user } = await this.authService.login(loginUserDto);
     return { accessToken: token, user: user };
+  }
+
+  @Get('email-confirmation')
+  emailConfirmation() {
+    return 'thank you for confirming your email';
   }
 }
