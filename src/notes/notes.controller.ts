@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, UseGuards, Logger } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+  Logger,
+} from '@nestjs/common';
 import { NotesService } from './notes.service';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
@@ -18,7 +30,6 @@ export class NotesController {
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: NoteEntity })
   async create(@Body() createNoteDto: CreateNoteDto) {
-    this.logger.log(`create note: ${createNoteDto.title} -- ${createNoteDto.content} -- ${createNoteDto.userId}`);
     const note = await this.notesService.create(createNoteDto);
     return new NoteEntity(note);
   }

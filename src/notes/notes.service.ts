@@ -10,15 +10,14 @@ export class NotesService {
   constructor(private prisma: PrismaService) {}
 
   async create(createNoteDto: CreateNoteDto): Promise<Note> {
-    this.logger.log(`create note: ${createNoteDto.title} -- ${createNoteDto.content} -- ${createNoteDto.userId}`);
     return this.prisma.note.create({
       data: {
         title: createNoteDto.title,
         content: createNoteDto.content,
-        userId: createNoteDto.userId
+        userId: createNoteDto.userId,
       },
-      include: { user: true, tags: true }
-    })
+      include: { user: true, tags: true },
+    });
   }
 
   async findAll(): Promise<Note[]> {
@@ -26,7 +25,10 @@ export class NotesService {
   }
 
   async delete(id: string): Promise<Note> {
-    const note = await this.prisma.note.delete({ where: { id }, include: { user: true, tags: true } });
+    const note = await this.prisma.note.delete({
+      where: { id },
+      include: { user: true, tags: true },
+    });
     this.logger.debug(`deleted note: ${note.title}`);
     return note;
   }

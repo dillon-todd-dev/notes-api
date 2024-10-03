@@ -1,31 +1,31 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Note } from "@prisma/client";
-import { UserEntity } from "src/users/entity/user.entity";
+import { ApiProperty } from '@nestjs/swagger';
+import { Note } from '@prisma/client';
+import { UserEntity } from 'src/users/entity/user.entity';
 
 export class NoteEntity implements Note {
-    constructor({ user, ...data }: Partial<NoteEntity>) {
-        Object.assign(this, data);
-        this.user = new UserEntity(user);
-    }
-    
-    @ApiProperty()
-    id: string;
+  constructor({ user, ...data }: Partial<NoteEntity>) {
+    Object.assign(this, data);
+    this.user = new UserEntity(user);
+  }
 
-    @ApiProperty()
-    title: string;
+  @ApiProperty()
+  id: string;
 
-    @ApiProperty()
-    content: string;
+  @ApiProperty()
+  title: string;
 
-    @ApiProperty()
-    createdAt: Date;
+  @ApiProperty()
+  content: string;
 
-    @ApiProperty()
-    updatedAt: Date;
+  @ApiProperty()
+  createdAt: Date;
 
-    @ApiProperty()
-    userId: string;
+  @ApiProperty()
+  updatedAt: Date;
 
-    @ApiProperty({ type: UserEntity })
-    user: UserEntity
+  @ApiProperty()
+  userId: string;
+
+  @ApiProperty({ type: UserEntity })
+  user: UserEntity;
 }

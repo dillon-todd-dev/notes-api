@@ -1,20 +1,20 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Tag } from "@prisma/client";
-import { NoteEntity } from "src/notes/entities/note.entity";
+import { ApiProperty } from '@nestjs/swagger';
+import { Tag } from '@prisma/client';
+import { NoteEntity } from 'src/notes/entities/note.entity';
 
 export class TagEntity implements Tag {
-    @ApiProperty()
-    id: string;
+  @ApiProperty()
+  id: string;
 
-    @ApiProperty()
-    name: string;
+  @ApiProperty()
+  name: string;
 
-    @ApiProperty()
-    createdAt: Date;
+  @ApiProperty()
+  createdAt: Date;
 
-    @ApiProperty()
-    updatedAt: Date;
+  @ApiProperty()
+  updatedAt: Date;
 
-    @ApiProperty()
-    notes: NoteEntity[];
+  @ApiProperty()
+  notes: NoteEntity[];
 }

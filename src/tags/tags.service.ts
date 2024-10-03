@@ -15,13 +15,13 @@ export class TagsService {
         name: createTagDto.name,
         notes: {
           connect: {
-            id: createTagDto.noteId
-          }
-        }
+            id: createTagDto.noteId,
+          },
+        },
       },
       include: {
-        notes: true
-      }
+        notes: true,
+      },
     });
     this.logger.debug(`created tag: ${tag.name}`);
     return tag;
@@ -30,13 +30,16 @@ export class TagsService {
   async findAll(): Promise<Tag[]> {
     return this.prisma.tag.findMany({
       include: {
-        notes: true
-      }
+        notes: true,
+      },
     });
   }
 
   async remove(id: string) {
-    const tag = await this.prisma.tag.delete({ where: { id }, include: { notes: true } });
+    const tag = await this.prisma.tag.delete({
+      where: { id },
+      include: { notes: true },
+    });
     this.logger.debug(`deleted tag: ${tag.name}`);
     return tag;
   }
