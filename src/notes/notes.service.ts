@@ -1,26 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateNoteDto } from './dto/create-note.dto';
-import { UpdateNoteDto } from './dto/update-note.dto';
+import { Note } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class NotesService {
-  create(createNoteDto: CreateNoteDto) {
-    return 'This action adds a new note';
+  private readonly logger: Logger = new Logger(NotesService.name);
+
+  constructor(private prisma: PrismaService) {}
+
+  async create(createNoteDto: CreateNoteDto): Promise<Note> {
+    this.logger.log(`create note: ${createNoteDto.title} -- ${createNoteDto.content} -- ${createNoteDto.userId}`);
+    return this.prisma.note.create({
+      data: {
+        title: createNoteDto.title,
+        content: createNoteDto.content,
+        userId: createNoteDto.userId
+      },
+      include: { user: true, tags: true }
+    })
   }
 
-  findAll() {
-    return `This action returns all notes`;
+  async findAll(): Promise<Note[]> {
+    return this.prisma.note.findMany({ include: { user: true, tags: true } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} note`;
-  }
-
-  update(id: number, updateNoteDto: UpdateNoteDto) {
-    return `This action updates a #${id} note`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} note`;
+  async delete(id: string): Promise<Note> {
+    const note = await this.prisma.note.delete({ where: { id }, include: { user: true, tags: true } });
+    this.logger.debug(`deleted note: ${note.title}`);
+    return note;
   }
 }

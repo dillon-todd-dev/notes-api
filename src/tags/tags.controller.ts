@@ -1,34 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { TagsService } from './tags.service';
 import { CreateTagDto } from './dto/create-tag.dto';
-import { UpdateTagDto } from './dto/update-tag.dto';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { TagEntity } from './entities/tag.entity';
+import { JwtAuthGuard } from 'src/auth/auth.guard';
 
 @Controller('tags')
+@ApiTags('tags')
 export class TagsController {
   constructor(private readonly tagsService: TagsService) {}
 
   @Post()
-  create(@Body() createTagDto: CreateTagDto) {
-    return this.tagsService.create(createTagDto);
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  @ApiCreatedResponse({ type: TagEntity })
+  async create(@Body() createTagDto: CreateTagDto) {
+    return await this.tagsService.create(createTagDto);
   }
 
   @Get()
-  findAll() {
-    return this.tagsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tagsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTagDto: UpdateTagDto) {
-    return this.tagsService.update(+id, updateTagDto);
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: TagEntity, isArray: true })
+  async findAll() {
+    return await this.tagsService.findAll();
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tagsService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ type: TagEntity })
+  async remove(@Param('id') id: string) {
+    return await this.tagsService.remove(id);
   }
 }

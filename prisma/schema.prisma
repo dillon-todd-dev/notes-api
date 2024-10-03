@@ -32,21 +32,13 @@ model Note {
   updatedAt DateTime @updatedAt
   userId String // fk
   user User @relation(fields: [userId], references: [id])
-  tags TagsOnNotes[]
+  tags Tag[]
 }
 
 model Tag {
   id String @id @default(uuid())
   name String
-  tags TagsOnNotes[]
-}
-
-// junction table between tags and notes
-model TagsOnNotes {
-  noteId String // fk
-  tagId String // fk
-  note Note @relation(fields: [noteId], references: [id])
-  tag Tag @relation(fields: [tagId], references: [id])
-
-  @@id([noteId, tagId])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  notes Note[]
 }

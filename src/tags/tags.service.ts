@@ -1,26 +1,43 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateTagDto } from './dto/create-tag.dto';
-import { UpdateTagDto } from './dto/update-tag.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Tag } from '@prisma/client';
 
 @Injectable()
 export class TagsService {
-  create(createTagDto: CreateTagDto) {
-    return 'This action adds a new tag';
+  private readonly logger: Logger = new Logger(TagsService.name);
+
+  constructor(private prisma: PrismaService) {}
+
+  async create(createTagDto: CreateTagDto): Promise<Tag> {
+    const tag = await this.prisma.tag.create({
+      data: {
+        name: createTagDto.name,
+        notes: {
+          connect: {
+            id: createTagDto.noteId
+          }
+        }
+      },
+      include: {
+        notes: true
+      }
+    });
+    this.logger.debug(`created tag: ${tag.name}`);
+    return tag;
   }
 
-  findAll() {
-    return `This action returns all tags`;
+  async findAll(): Promise<Tag[]> {
+    return this.prisma.tag.findMany({
+      include: {
+        notes: true
+      }
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} tag`;
-  }
-
-  update(id: number, updateTagDto: UpdateTagDto) {
-    return `This action updates a #${id} tag`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} tag`;
+  async remove(id: string) {
+    const tag = await this.prisma.tag.delete({ where: { id }, include: { notes: true } });
+    this.logger.debug(`deleted tag: ${tag.name}`);
+    return tag;
   }
 }
