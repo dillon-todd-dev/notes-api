@@ -1,10 +1,25 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthEntity } from './entity/auth.entity';
 import { UserEntity } from 'src/users/entity/user.entity';
+import { Request } from 'express';
+import { JwtAuthGuard } from './auth.guard';
+import { use } from 'passport';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -31,7 +46,25 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Get('email-confirmation')
   async emailConfirmation(@Query('token') token: string) {
-    const user = await this.authService.confirmEmail(token)
+    const user = await this.authService.confirmEmail(token);
+    return new UserEntity(user);
+  }
+
+  @ApiOkResponse()
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async deleteUser(@Param('id') id: string) {
+    const user = await this.authService.deleteUser(id);
+    return new UserEntity(user);
+  }
+
+  @ApiOkResponse()
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @Get('loggedInUser')
+  async getLoggedInUser(@Req() req: Request) {
+    const user = await this.authService.getLoggedInUser(req);
     return new UserEntity(user);
   }
 }

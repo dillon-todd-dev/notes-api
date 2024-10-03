@@ -7,8 +7,13 @@ import { TagsModule } from './tags/tags.module';
 import { EmailModule } from './email/email.module';
 
 @Module({
-  imports: [PrismaModule, UsersModule, AuthModule, NotesModule, TagsModule, EmailModule],
-  controllers: [],
-  providers: [],
+  imports: [
+    PrismaModule,
+    UsersModule,
+    AuthModule,
+    NotesModule,
+    TagsModule,
+    EmailModule,
+  ],
 })
 export class AppModule {}

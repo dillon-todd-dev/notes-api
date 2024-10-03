@@ -23,7 +23,7 @@ export class UserEntity implements User {
   lastName: string;
 
   @ApiProperty({ default: false })
-  emailConfirmed: boolean
+  emailConfirmed: boolean;
 
   @ApiProperty()
   createdAt: Date;

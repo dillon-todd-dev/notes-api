@@ -11,7 +11,8 @@ import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { UserEntity } from 'src/users/entity/user.entity';
 import { EmailService } from 'src/email/email.service';
-import { use } from 'passport';
+import { Request } from 'express';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +21,7 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    private emailService: EmailService
+    private emailService: EmailService,
   ) {}
 
   async register(
@@ -55,7 +56,7 @@ export class AuthService {
     return { token, user: new UserEntity(user) };
   }
 
-  async confirmEmail(token: string) {
+  async confirmEmail(token: string): Promise<User> {
     if (await this.jwtService.verifyAsync(token)) {
       const claims = await this.jwtService.decode(token);
       const user = await this.usersService.findByEmail(claims.email);
@@ -69,10 +70,20 @@ export class AuthService {
         lastName: user.lastName,
         email: user.email,
         password: user.password,
-        emailConfirmed: true
-      })
+        emailConfirmed: true,
+      });
     }
 
     throw new NotFoundException();
+  }
+
+  async deleteUser(id: string): Promise<User> {
+    return this.usersService.delete(id);
+  }
+
+  async getLoggedInUser(req: Request): Promise<User> {
+    const token = req.headers.authorization.split(' ')[1];
+    const claims = await this.jwtService.decode(token);
+    return this.usersService.findByEmail(claims.email);
   }
 }

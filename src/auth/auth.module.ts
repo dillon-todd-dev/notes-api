@@ -16,7 +16,7 @@ import { EmailModule } from 'src/email/email.module';
       signOptions: { expiresIn: '60m' },
     }),
     UsersModule,
-    EmailModule
+    EmailModule,
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
