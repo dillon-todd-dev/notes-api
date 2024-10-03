@@ -11,6 +11,7 @@ import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { UserEntity } from 'src/users/entity/user.entity';
 import { EmailService } from 'src/email/email.service';
+import { use } from 'passport';
 
 @Injectable()
 export class AuthService {
@@ -52,5 +53,26 @@ export class AuthService {
     const payload = { email, sub: user.id };
     const token = await this.jwtService.signAsync(payload);
     return { token, user: new UserEntity(user) };
+  }
+
+  async confirmEmail(token: string) {
+    if (await this.jwtService.verifyAsync(token)) {
+      const claims = await this.jwtService.decode(token);
+      const user = await this.usersService.findByEmail(claims.email);
+      if (!user) {
+        throw new NotFoundException();
+      }
+
+      return this.usersService.update({
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        password: user.password,
+        emailConfirmed: true
+      })
+    }
+
+    throw new NotFoundException();
   }
 }

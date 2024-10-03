@@ -15,4 +15,7 @@ export class UpdateUserDto {
 
   @ApiProperty()
   lastName: string;
+
+  @ApiProperty()
+  emailConfirmed: boolean;
 }

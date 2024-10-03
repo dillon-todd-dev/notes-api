@@ -21,7 +21,7 @@ export class UsersService {
   }
 
   async findAll() {
-    return this.prisma.user.findMany
+    return this.prisma.user.findMany();
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {

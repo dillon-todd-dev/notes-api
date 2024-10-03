@@ -1,9 +1,10 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query } from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthEntity } from './entity/auth.entity';
+import { UserEntity } from 'src/users/entity/user.entity';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -26,8 +27,11 @@ export class AuthController {
     return { accessToken: token, user: user };
   }
 
+  @ApiOkResponse()
+  @HttpCode(HttpStatus.OK)
   @Get('email-confirmation')
-  emailConfirmation() {
-    return 'thank you for confirming your email';
+  async emailConfirmation(@Query('token') token: string) {
+    const user = await this.authService.confirmEmail(token)
+    return new UserEntity(user);
   }
 }

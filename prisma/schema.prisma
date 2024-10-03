@@ -19,6 +19,7 @@ model User {
   password String
   firstName String
   lastName String
+  emailConfirmed Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   notes Note[]
