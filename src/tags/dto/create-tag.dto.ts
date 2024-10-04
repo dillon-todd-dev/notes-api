@@ -9,4 +9,8 @@ export class CreateTagDto {
   @IsNotEmpty()
   @ApiProperty()
   noteId: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  userId: string;
 }

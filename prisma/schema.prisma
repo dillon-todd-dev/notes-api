@@ -23,6 +23,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   notes Note[]
+  tags Tag[]
 }
 
 model Note {
@@ -41,5 +42,7 @@ model Tag {
   name String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId String
+  user User @relation(fields: [userId], references: [id])
   notes Note[]
 }
